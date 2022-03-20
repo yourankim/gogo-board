@@ -21,11 +21,6 @@ tmp/
 # Locally stored "Eclipse launch configurations"
 *.launch
 
-# PyDev specific (Python IDE for Eclipse)
-*.pydevproject
-
-# CDT-specific (C/C++ Development Tooling)
-.cproject
 
 # CDT- autotools
 .autotools
@@ -33,8 +28,6 @@ tmp/
 # Java annotation processor (APT)
 .factorypath
 
-# PDT-specific (PHP Development Tools)
-.buildpath
 
 # sbteclipse plugin
 .target
@@ -55,10 +48,6 @@ tmp/
 .apt_generated/
 .apt_generated_test/
 
-# Scala IDE specific (Scala & Java development for Eclipse)
-.cache-main
-.scala_dependencies
-.worksheet
 
 # Uncomment this line if you wish to ignore the project description file.
 # Typically, this file would be tracked if it contains build/dependency configurations:
