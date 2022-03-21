@@ -43,4 +43,7 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
+	<!-- Spring Security 비밀번호 암호화  -->
+	<beans:bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />  
+	
 </beans>

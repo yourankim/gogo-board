@@ -8,4 +8,18 @@
     SELECT *
       FROM "Users"
   </select>
+  
+  <insert id="insertUser" parameterType="UserVO">
+    INSERT INTO "Users" (
+    	id,
+    	email,
+    	name,
+    	password
+    ) VALUES (
+    	uuid_generate_v4(),
+    	#{email},
+    	#{name},
+    	#{password}
+    )
+  </insert>
 </mapper>
