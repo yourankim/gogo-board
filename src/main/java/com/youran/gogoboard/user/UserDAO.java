@@ -15,4 +15,8 @@ public class UserDAO extends HelpSqlSessionTemplate {
 	public int insertUser(UserVO userVO) throws Exception {
 		return getSqlSessionTemplate().insert("users.insertUser", userVO);
 	}
+	
+	public UserVO findUserByEmail(String email) throws Exception {
+		return getSqlSessionTemplate().selectOne("users.findUserByEmail", email);
+	}
 }
