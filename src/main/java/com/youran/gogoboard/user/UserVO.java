@@ -1,8 +1,6 @@
 package com.youran.gogoboard.user;
 
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 
 @Data
 public class UserVO {

@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -60,5 +61,28 @@ public class UserController {
 		}
 		return new ResponseEntity<String>(authVO.getAccessToken(),HttpStatus.OK);
 	}
+	
+	@PostMapping("/auth/refresh")
+	public ResponseEntity<String> refresh(@CookieValue(value="refreshToken", required=true) Cookie refresh, HttpServletResponse response) {
+		
+		AuthVO authVO = new AuthVO();
+		
+		try {
+			authVO.setRefreshToken(refresh.getValue());
+			logger.debug(refresh.getValue());
+			
+			authVO = service.refresh(authVO);
+			refresh.setValue(authVO.getRefreshToken());
+			
+		} catch(UnauthorizedException ue) {
+			return new ResponseEntity<String>(ue.getMessage(), HttpStatus.UNAUTHORIZED);
+		} catch(Exception e) {
+			logger.error("Exception in login: {}", e.getMessage());
+			return new ResponseEntity<String>("Fail...", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		return new ResponseEntity<String>(authVO.getAccessToken(),HttpStatus.OK);
+	}
+	
+	
 
 }
