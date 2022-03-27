@@ -19,7 +19,7 @@
 	<result property="name" column="user_name"/>
   </resultMap>
   
-  <select id="selectPosts" resultMap="postResult">
+  <select id="selectPosts" parameterType="PageVO" resultMap="postResult">
     SELECT 
     	    p.id as post_id,
     	    p.title as post_title,
@@ -31,6 +31,8 @@
     	    p.updated as post_updated
       FROM "Posts" p, "Users" u
      WHERE  p.user_id = u.id
+     LIMIT #{limit} 
+  	OFFSET #{offset}
   </select>
   
   <select id="selectPostById" resultMap="postResult">
@@ -45,7 +47,7 @@
     	    p.updated as post_updated
   	  FROM "Posts" p, "Users" u
   	 WHERE p.user_id = u.id
-  	   AND p.id = uuid(#{id}) 
+  	   AND p.id = uuid(#{id})
   </select>
   
   <insert id="insertPost" parameterType="PostVO">

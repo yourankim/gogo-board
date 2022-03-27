@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import lombok.extern.slf4j.Slf4j;
@@ -23,12 +24,12 @@ public class PostController {
 	private PostService service;
 	
 	@GetMapping
-	public ResponseEntity<PostResponse> getPosts() {
+	public ResponseEntity<PostResponse> getPosts(@RequestParam(value="page", defaultValue="0") int page) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
-			response.setPosts(service.getPosts());
+			response.setPosts(service.getPosts(page));
 			
 		} catch(Exception e) {
 			log.error("Exception in getPosts: {}", e.getMessage());

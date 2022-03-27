@@ -16,8 +16,10 @@ public class PostService {
 	@Autowired
 	private PostDAO dao;
 	
-	public List<PostVO> getPosts() throws Exception {
-		return dao.selectPosts();
+	public List<PostVO> getPosts(int page) throws Exception {
+		PageVO pageVO = new PageVO();
+		pageVO.setPage(page);
+		return dao.selectPosts(pageVO);
 	}
 	
 	public PostVO findPostById(String id) throws Exception {

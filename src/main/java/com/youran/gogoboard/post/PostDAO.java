@@ -9,8 +9,8 @@ import com.youran.gogoboard.HelpSqlSessionTemplate;
 @Repository
 public class PostDAO extends HelpSqlSessionTemplate {
 
-	public List<PostVO> selectPosts() throws Exception {
-		return getSqlSessionTemplate().selectList("posts.selectPosts");
+	public List<PostVO> selectPosts(PageVO pageVO) throws Exception {
+		return getSqlSessionTemplate().selectList("posts.selectPosts", pageVO);
 	}
 	
 	public PostVO selectPostById(String id) throws Exception {

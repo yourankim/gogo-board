@@ -14,6 +14,7 @@
   <typeAliases>
   	<typeAlias alias = "UserVO" type = "com.youran.gogoboard.user.UserVO"/>
   	<typeAlias alias = "PostVO" type = "com.youran.gogoboard.post.PostVO"/>
+  	<typeAlias alias = "PageVO" type = "com.youran.gogoboard.post.PageVO"/>
   </typeAliases>
   <mappers>
   	<mapper resource="mappers/UserMapper.xml"/>
