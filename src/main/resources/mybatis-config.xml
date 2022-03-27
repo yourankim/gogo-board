@@ -8,13 +8,15 @@
   	<setting name="multipleResultSetsEnabled" value="true" />
   	<setting name="useColumnLabel" value="true" />
   	<setting name="defaultExecutorType" value="SIMPLE" />
-  	<setting name="mapUnderscoreToCamelCase" value="false" />
+  	<setting name="mapUnderscoreToCamelCase" value="true" />
   	<setting name="jdbcTypeForNull" value="VARCHAR" />
   </settings>
   <typeAliases>
   	<typeAlias alias = "UserVO" type = "com.youran.gogoboard.user.UserVO"/>
+  	<typeAlias alias = "PostVO" type = "com.youran.gogoboard.post.PostVO"/>
   </typeAliases>
   <mappers>
   	<mapper resource="mappers/UserMapper.xml"/>
+  	<mapper resource="mappers/PostMapper.xml"/>
   </mappers>
 </configuration>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+<mapper namespace="posts">
+
+  <resultMap id="postResult" type="PostVO">
+  	<id property="id" column="post_id"/>
+	<result property="title" column="post_title"/>
+	<result property="content" column="post_content"/>
+	<result property="created" column="post_created"/>
+	<result property="updated" column="post_updated"/>
+	<association property="user" column="post_user_id" javaType="UserVO" resultMap="userResult"/>
+  </resultMap>
+  
+  <resultMap id="userResult" type="UserVO">
+	<id property="id" column="user_id"/>
+	<result property="name" column="user_name"/>
+  </resultMap>
+  
+  <select id="selectPosts" resultMap="postResult">
+    SELECT 
+    	    p.id as post_id,
+    	    p.title as post_title,
+    	    p.content as post_content,
+    	    p.user_id as post_user_id,
+    	    u.id as user_id,
+    	    u.name as user_name,
+    	    p.created as post_created,
+    	    p.updated as post_updated
+      FROM "Posts" p, "Users" u
+     WHERE  p.user_id = u.id
+  </select>
+  
+  <select id="selectPostById" resultMap="postResult">
+  	SELECT 
+  			p.id as post_id,
+    	    p.title as post_title,
+    	    p.content as post_content,
+    	    p.user_id as post_user_id,
+    	    u.id as user_id,
+    	    u.name as user_name,
+    	    p.created as post_created,
+    	    p.updated as post_updated
+  	  FROM "Posts" p, "Users" u
+  	 WHERE p.user_id = u.id
+  	   AND p.id = uuid(#{id}) 
+  </select>
+  
+  <insert id="insertPost" parameterType="PostVO">
+  	INSERT INTO "Posts" (
+  		id, 
+  		title, 
+  		content, 
+  		user_id
+  	) VALUES (
+  		uuid_generate_v4(),
+  		#{title},
+  		#{content},
+  		uuid(#{user.id})
+  	)
+  </insert>
+  
+  <update id="updatePost" parameterType="PostVO">
+  	UPDATE "Posts" 
+  	   SET title = #{title},
+  	       content = #{content},
+  	       updated = now()
+  	 WHERE id = uuid(#{id})  
+  	   AND user_id= uuid(#{user.id}) 
+  </update>
+  
+  <delete id="deletePost" parameterType="PostVO">
+  	DELETE FROM "Posts"
+  	 WHERE id = uuid(#{id})
+  	   AND user_id = uuid(#{user.id})
+  
+  </delete>
+</mapper>
