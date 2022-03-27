@@ -22,4 +22,10 @@
     	#{password}
     )
   </insert>
+  
+  <select id="findUserByEmail" parameterType="string" resultType="UserVO">
+  	SELECT *
+  	FROM "Users"
+  	WHERE email = #{email}
+  </select>
 </mapper>
