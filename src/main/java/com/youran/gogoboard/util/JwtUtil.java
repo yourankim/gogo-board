@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.time.Instant;
 import java.util.UUID;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
@@ -14,21 +14,31 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Getter
 @Setter
+@Component
 public class JwtUtil {
 	
-	private static final Logger logger = LoggerFactory.getLogger(JwtUtil.class);
-	
+	@Value("${jwt.issuer}")
 	private String issuer;
+	@Value("${jwt.access.secret}")
 	private String accessSecret;
+	@Value("${jwt.refresh.secret}")
 	private String refreshSecret;
+	@Value("${jwt.access.duration}")
 	private long accessDuration;
+	@Value("${jwt.refresh.duration}")
 	private long refreshDuration;
 	
 	
 	public String generateAccessToken(String claim) {
+		log.debug("generateAccesToken-accessDuration: {}", accessDuration);
+		log.debug("now {}", Date.from(Instant.now()));
+		log.debug("expiresAt {}", Date.from(Instant.now().plusMillis(accessDuration)));
+		
 		return JWT.create().withIssuer(issuer)
 					.withClaim("identifier", claim)
 					.withExpiresAt(Date.from(Instant.now().plusMillis(accessDuration)))
@@ -43,7 +53,7 @@ public class JwtUtil {
 					.build()
 					.verify(token);
 		} catch(JWTVerificationException e) {
-			logger.debug(e.getMessage());
+			log.debug(e.getMessage());
 		}
 		return decodedJWT;
 	}
@@ -56,10 +66,16 @@ public class JwtUtil {
 	}
 	
 	public DecodedJWT verifyRefreshToken(String token) {
-		return JWT.require(Algorithm.HMAC256(refreshSecret))
-				.withIssuer(issuer)
-				.build()
-				.verify(token);
+		DecodedJWT decodedJWT = null;
+		try {
+			decodedJWT = JWT.require(Algorithm.HMAC256(refreshSecret))
+					.withIssuer(issuer)
+					.build()
+					.verify(token);
+		} catch(JWTVerificationException e) {
+			log.debug(e.getMessage());
+		}
+		return decodedJWT;
 
 	}
 

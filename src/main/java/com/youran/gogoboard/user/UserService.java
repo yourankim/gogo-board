@@ -8,20 +8,20 @@ import java.util.Map;
 
 import javax.inject.Inject;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.auth0.jwt.interfaces.DecodedJWT;
-import com.youran.gogoboard.user.exception.UnauthorizedException;
+import com.youran.gogoboard.exception.UnauthorizedException;
 import com.youran.gogoboard.util.JwtUtil;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserService {
-	
-	private static final Logger logger = LoggerFactory.getLogger(UserService.class);
+
 	
 	@Inject
 	private UserDAO dao;
@@ -56,25 +56,24 @@ public class UserService {
 		AuthVO authVO = new AuthVO();
 		authVO.setAccessToken(accessToken);
 		authVO.setRefreshToken(refreshToken);
+		authVO.setUserId(user.getId());
 
 		return authVO;
 	}
 	
 	public AuthVO refresh(AuthVO authVO) throws Exception {
 		String refreshToken = authVO.getRefreshToken();
-		logger.debug("refreshTokenStore: {}", refreshTokenStore.keySet().toString());
 		String userId = refreshTokenStore.remove(refreshToken);
-	
 		
 		if(null == userId) {
 			throw new UnauthorizedException("토큰을 찾을 수 없습니다.");
 		}
 
-		DecodedJWT decodedJWT = jwt.verifyRefreshToken(refreshToken);
-		if(null == decodedJWT) {
+		DecodedJWT decodedJwt = jwt.verifyRefreshToken(refreshToken);
+		if(null == decodedJwt) {
 			throw new UnauthorizedException("토큰이 유효하지 않습니다.");
 		}
-		if(decodedJWT.getExpiresAt().before(Date.from(Instant.now()))) {
+		if(decodedJwt.getExpiresAt().before(Date.from(Instant.now()))) {
 			throw new UnauthorizedException("토큰이 만료되었습니다.");
 		}
 		
@@ -87,7 +86,5 @@ public class UserService {
 		
 		return newAuthVO;
 	}
-	
-    
 
 }

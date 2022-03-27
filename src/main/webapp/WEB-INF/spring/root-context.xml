@@ -56,4 +56,12 @@
 		<property name="issuer" value="${jwt.issuer}" />
 	</bean>
 	
+	<context:component-scan base-package="com.youran.gogoboard">
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+   	</context:component-scan>
+	
+
+	
 </beans>

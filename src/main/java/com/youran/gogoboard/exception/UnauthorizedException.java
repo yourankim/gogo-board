@@ -1,4 +1,4 @@
-package com.youran.gogoboard.user.exception;
+package com.youran.gogoboard.exception;
 
 public class UnauthorizedException extends Exception {
 

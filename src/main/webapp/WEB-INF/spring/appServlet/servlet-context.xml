@@ -22,7 +22,11 @@
 	</beans:bean>
 	 -->
 	
-	<context:component-scan base-package="com.youran.gogoboard" />
+	<context:component-scan base-package="com.youran.gogoboard" use-default-filters="false">
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    	<context:include-filter type="annotation" expression="org.springframework.stereotype.Repository"/>
+   	</context:component-scan>
 	
 	
 	
