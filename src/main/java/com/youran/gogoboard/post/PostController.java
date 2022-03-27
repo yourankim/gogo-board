@@ -3,6 +3,7 @@ package com.youran.gogoboard.post;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -63,33 +64,43 @@ public class PostController {
 
 	
 	@PostMapping
-	public ResponseEntity<PostResponse> creatNewPost(@RequestBody PostVO newPost) {
+	public ResponseEntity<PostResponse> creatNewPost(
+			Authentication authentication,
+			@RequestBody PostVO newPost) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
-			String userId = "761b7be6-944a-42e4-8936-7d6754d29b18";
+			//TODO: userDetail 사용하는게 나을지?
+		    Object principal = authentication.getPrincipal();
+			String userId = principal.toString().replace("\"", "");
 			service.createNewPost(newPost, userId);
+			
+			response.setMessage("Success!!");
 			
 		} catch(Exception e) {
 			log.error("Exception in creatNewPost: {}", e.getMessage());
 			response.setMessage("Fail...");
 			return new ResponseEntity<PostResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		
-		response.setMessage("Success!!");
+
 		return new ResponseEntity<PostResponse>(response,HttpStatus.OK);
 		
 	}
 	
 	@PatchMapping
-	public ResponseEntity<PostResponse> updatePost(@RequestBody PostVO post) {
+	public ResponseEntity<PostResponse> updatePost(
+			Authentication authentication,
+			@RequestBody PostVO post) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
-			String userId = "761b7be6-944a-42e4-8936-7d6754d29b18";
+			Object principal = authentication.getPrincipal();
+			String userId = principal.toString().replace("\"", "");
 			service.updatePost(post, userId);
+			
+			response.setMessage("Success!!");		
 			
 		} catch(Exception e) {
 			log.error("Exception in updatePost: {}", e.getMessage());
@@ -97,19 +108,23 @@ public class PostController {
 			return new ResponseEntity<PostResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.setMessage("Success!!");
 		return new ResponseEntity<PostResponse>(response,HttpStatus.OK);
 		
 	}
 	
 	@DeleteMapping
-	public ResponseEntity<PostResponse> deletePost(@RequestBody PostVO post) {
+	public ResponseEntity<PostResponse> deletePost(
+			Authentication authentication,
+			@RequestBody PostVO post) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
-			String userId = "761b7be6-944a-42e4-8936-7d6754d29b18";
+			Object principal = authentication.getPrincipal();
+			String userId = principal.toString().replace("\"", "");
 			service.deletePost(post, userId);
+			
+			response.setMessage("Success!!");
 			
 		} catch(Exception e) {
 			log.error("Exception in deletePost: {}", e.getMessage());
@@ -117,7 +132,6 @@ public class PostController {
 			return new ResponseEntity<PostResponse>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		
-		response.setMessage("Success!!");
 		return new ResponseEntity<PostResponse>(response,HttpStatus.OK);
 		
 	}
