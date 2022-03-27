@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.management.openmbean.KeyAlreadyExistsException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,7 +24,7 @@ import lombok.extern.slf4j.Slf4j;
 public class UserService {
 
 	
-	@Inject
+	@Autowired
 	private UserDAO dao;
 	@Autowired
 	private BCryptPasswordEncoder passwordEncoder;
@@ -37,6 +38,10 @@ public class UserService {
 	}
 	
 	public void addUser(UserVO userVO) throws Exception {
+		UserVO user = dao.findUserByEmail(userVO.getEmail());
+		if(null != user) {
+			throw new KeyAlreadyExistsException("이미 존재하는 이메일입니다.");
+		}
 		String encPassword = passwordEncoder.encode(userVO.getPassword());
 		userVO.setPassword(encPassword);
 		dao.insertUser(userVO);
