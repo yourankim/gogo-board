@@ -1,12 +1,9 @@
 package com.youran.gogoboard.user;
 
-import java.security.Principal;
-
+import javax.management.openmbean.KeyAlreadyExistsException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +35,8 @@ public class UserController {
 		try {	
 			service.addUser(userVO);
 			
+		} catch(KeyAlreadyExistsException ke) {
+			return new ResponseEntity<String>(ke.getMessage(), HttpStatus.CONFLICT);
 		} catch(Exception e) {
 			log.error("Exception in addUser: {}", e.getMessage());
 			return new ResponseEntity<String>("Fail...", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -48,7 +47,8 @@ public class UserController {
 	}
 	
 	@PostMapping("/auth")
-	public ResponseEntity<String> login(@RequestBody UserVO userVO, Authentication authentication, HttpServletResponse response) {
+	public ResponseEntity<String> login(@RequestBody UserVO userVO, 
+			Authentication authentication, HttpServletResponse response) {
 		
 		AuthVO authVO = new AuthVO();
 		
@@ -59,10 +59,10 @@ public class UserController {
 			//cookie.setSecure(true); // https 사용시 설정 
 			cookie.setHttpOnly(true); // servlet-api 3 이후 사용 가능 
 			response.addCookie(cookie);
-			authentication = new UserAuthentication(
-					authVO.getUserId(), authVO.getAccessToken()
-					);
-			log.debug("authentication: {}", authentication);
+			
+			authentication = new UserAuthentication((Object)authVO.getUserId(), authVO.getAccessToken());
+			SecurityContextHolder.getContext().setAuthentication(authentication);
+			
 		} catch(UnauthorizedException ue) {
 			return new ResponseEntity<String>(ue.getMessage(), HttpStatus.UNAUTHORIZED);
 		} catch(Exception e) {
@@ -75,7 +75,6 @@ public class UserController {
 	@PostMapping("/auth/refresh")
 	public ResponseEntity<String> refresh(
 			@CookieValue(value="refreshToken", required=true) Cookie cookie, 
-			Principal principal, 
 			HttpServletResponse response) {
 		
 		AuthVO authVO = new AuthVO();
@@ -84,8 +83,6 @@ public class UserController {
 			authVO.setRefreshToken(cookie.getValue());	
 			authVO = service.refresh(authVO);
 			cookie.setValue(authVO.getRefreshToken());
-			
-			log.debug("principal!!! {}", principal);
 			
 		} catch(UnauthorizedException ue) {
 			return new ResponseEntity<String>(ue.getMessage(), HttpStatus.UNAUTHORIZED);
