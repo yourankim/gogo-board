@@ -31,9 +31,10 @@
     	    p.updated as post_updated
       FROM "Posts" p, "Users" u
      WHERE  p.user_id = u.id
+     ORDER  BY p.created DESC 
      LIMIT #{limit} 
   	OFFSET #{offset}
-  </select>
+	</select>
   
   <select id="selectPostById" resultMap="postResult">
   	SELECT 

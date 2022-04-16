@@ -112,17 +112,17 @@ public class PostController {
 		
 	}
 	
-	@DeleteMapping
+	@DeleteMapping("/{id}")
 	public ResponseEntity<PostResponse> deletePost(
 			Authentication authentication,
-			@RequestBody PostVO post) {
+			@PathVariable String id) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
 			Object principal = authentication.getPrincipal();
 			String userId = principal.toString().replace("\"", "");
-			service.deletePost(post, userId);
+			service.deletePost(id, userId);
 			
 			response.setMessage("Success!!");
 			

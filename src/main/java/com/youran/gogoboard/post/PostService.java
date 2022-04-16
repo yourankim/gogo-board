@@ -1,5 +1,6 @@
 package com.youran.gogoboard.post;
 
+
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,13 @@ public class PostService {
 		dao.updatePost(postVO);
 	}
 	
-	public void deletePost(PostVO postVO, String userId) throws Exception {
+	public void deletePost(String postId, String userId) throws Exception {
+		PostVO post = new PostVO();
 		UserVO user = new UserVO();
 		user.setId(userId);
-		postVO.setUser(user);
-		dao.deletePost(postVO);
+		post.setId(postId);
+		post.setUser(user);
+		dao.deletePost(post);
 	};
 
 }
