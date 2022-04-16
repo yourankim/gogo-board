@@ -48,17 +48,15 @@
     	    p.updated as post_updated
   	  FROM "Posts" p, "Users" u
   	 WHERE p.user_id = u.id
-  	   AND p.id = uuid(#{id})
+  	   AND p.id = #{id}
   </select>
   
   <insert id="insertPost" parameterType="PostVO">
   	INSERT INTO "Posts" (
-  		id, 
   		title, 
   		content, 
   		user_id
   	) VALUES (
-  		uuid_generate_v4(),
   		#{title},
   		#{content},
   		uuid(#{user.id})
@@ -70,13 +68,13 @@
   	   SET title = #{title},
   	       content = #{content},
   	       updated = now()
-  	 WHERE id = uuid(#{id})  
+  	 WHERE id = #{id}  
   	   AND user_id= uuid(#{user.id}) 
   </update>
   
   <delete id="deletePost" parameterType="PostVO">
   	DELETE FROM "Posts"
-  	 WHERE id = uuid(#{id})
+  	 WHERE id = #{id}
   	   AND user_id = uuid(#{user.id})
   
   </delete>

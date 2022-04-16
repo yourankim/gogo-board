@@ -44,7 +44,7 @@ public class PostController {
 	
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<PostResponse> getPostDetail(@PathVariable String id) {
+	public ResponseEntity<PostResponse> getPostDetail(@PathVariable int id) {
 		
 		PostResponse response = new PostResponse();
 		log.debug("getPostDetail pathVariable: {}",id);
@@ -115,7 +115,7 @@ public class PostController {
 	@DeleteMapping("/{id}")
 	public ResponseEntity<PostResponse> deletePost(
 			Authentication authentication,
-			@PathVariable String id) {
+			@PathVariable int id) {
 		
 		PostResponse response = new PostResponse();
 		

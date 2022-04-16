@@ -23,7 +23,7 @@ public class PostService {
 		return dao.selectPosts(pageVO);
 	}
 	
-	public PostVO findPostById(String id) throws Exception {
+	public PostVO findPostById(int id) throws Exception {
 		return dao.selectPostById(id);
 	}
 	
@@ -41,7 +41,7 @@ public class PostService {
 		dao.updatePost(postVO);
 	}
 	
-	public void deletePost(String postId, String userId) throws Exception {
+	public void deletePost(int postId, String userId) throws Exception {
 		PostVO post = new PostVO();
 		UserVO user = new UserVO();
 		user.setId(userId);

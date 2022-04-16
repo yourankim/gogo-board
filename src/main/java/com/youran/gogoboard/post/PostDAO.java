@@ -13,7 +13,7 @@ public class PostDAO extends HelpSqlSessionTemplate {
 		return getSqlSessionTemplate().selectList("posts.selectPosts", pageVO);
 	}
 	
-	public PostVO selectPostById(String id) throws Exception {
+	public PostVO selectPostById(int id) throws Exception {
 		return getSqlSessionTemplate().selectOne("posts.selectPostById", id);
 	}
 	
