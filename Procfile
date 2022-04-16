@@ -1,1 +1,1 @@
-web: java -jar build/libs/app-name-1.0-SNAPSHOT.jar
+web: java -Dserver.port=$PORT -jar target/gogoboard-1.0.0-SNAPSHOT.jar
