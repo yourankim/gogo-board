@@ -2,6 +2,7 @@ package com.youran.gogoboard.security;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -11,8 +12,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import org.springframework.web.filter.CorsFilter;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,12 +25,15 @@ import lombok.extern.slf4j.Slf4j;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	private JwtTokenFilter jwtTokenFilter;
+	@Value("${cors.allowedOrigin}")
+	private String allowedOrigin;
 	
 	public SecurityConfig(JwtTokenFilter jwtTokenFilter) {
 		log.debug("SecurityConfig");   
 		this.jwtTokenFilter = jwtTokenFilter;
 	}
 	
+	//TODO: 이것도 필요할까?
 	@Bean 
 	public JwtAuthenticationProvider customAuthenticationProvider() { 
 		return new JwtAuthenticationProvider(); 
@@ -39,7 +44,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		
 		log.debug("SecurityConfig.configure");
 		
-		http.cors().and()
+		http.cors().configurationSource(corsConfigurationSource()).and()
 			.csrf().disable()
 			.httpBasic().disable()
 			.formLogin().disable()
@@ -53,16 +58,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			)
 			.and()
 			.authorizeRequests()
-			.antMatchers("/").permitAll()
-			.antMatchers("/users").permitAll()
-			.antMatchers("/users/auth").permitAll()
-			.anyRequest().authenticated()
+			.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+			.antMatchers("/posts/**").authenticated()
+			//.antMatchers("/users/auth/refresh").authenticated()
+			.anyRequest().permitAll()
 			.and()
 			.addFilterBefore(jwtTokenFilter, UsernamePasswordAuthenticationFilter.class);
 	}
 	
+	
 	@Bean
-	public CorsFilter corsFilter() {
+	public CorsConfigurationSource corsConfigurationSource() {
 		
 		log.debug("CorsFilter");
 		
@@ -70,10 +76,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		CorsConfiguration config = new CorsConfiguration();
 		config.setAllowCredentials(true);
 		config.addAllowedHeader("*");
-		config.addAllowedHeader("*");
 		config.addAllowedMethod("*");
+		config.addAllowedOrigin(allowedOrigin);
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
+		return source;
 	}
 
 }

@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://Java.sun.com/xml/ns/javaee https://Java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	xsi:schemaLocation="http://Java.sun.com/xml/ns/javaee https://Java.sun.com/xml/ns/javaee/web-app_3_0.xsd
+	http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/security https://www.springframework.org/schema/security/spring-security.xsd
+	">
 	<display-name></display-name>
 	<absolute-ordering/>
 
@@ -57,12 +60,8 @@
 	</filter>
 	<filter-mapping>
 		<filter-name>springSecurityFilterChain</filter-name>
-		<url-pattern>/users/auth/refresh</url-pattern>
-		<url-pattern>/posts/*</url-pattern>
+		<url-pattern>/*</url-pattern>
 	</filter-mapping>
-
-
 	
-
 	
 </web-app>

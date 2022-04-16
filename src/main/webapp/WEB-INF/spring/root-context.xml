@@ -16,8 +16,7 @@
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:properties/jdbc.properties</value>
-				<value>classpath:properties/jwt.properties</value>
+				<value>classpath:properties/application.properties</value>
 			</list>
 		</property>
 	</bean>
@@ -46,15 +45,6 @@
 	
 	<!-- Spring Security 비밀번호 암호화  -->
 	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />  
-	
-	<!-- JWT 토큰 생성,검증  -->
-	<bean id="jwtUtil" class="com.youran.gogoboard.util.JwtUtil">
-		<property name="accessSecret" value="${jwt.access.secret}" />
-		<property name="refreshSecret" value="${jwt.refresh.secret}" />
-		<property name="accessDuration" value="${jwt.access.duration}" />
-		<property name="refreshDuration" value="${jwt.refresh.duration}" />
-		<property name="issuer" value="${jwt.issuer}" />
-	</bean>
 	
 	<context:component-scan base-package="com.youran.gogoboard">
     	<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
