@@ -58,14 +58,11 @@ public class JwtTokenFilter extends OncePerRequestFilter {
 			return;
 		}
 
-		UserAuthentication authentication = new UserAuthentication(
-				decodedJwt.getClaim("identifier"), accessToken
-				);
-
+		UserAuthentication authentication = new UserAuthentication(decodedJwt.getClaim("identifier"), accessToken);
+		//TODO:setDetail 필요할까?
 		authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 		filterChain.doFilter(request, response);
-		log.debug("또 여기까지?");
 	}
 
 }

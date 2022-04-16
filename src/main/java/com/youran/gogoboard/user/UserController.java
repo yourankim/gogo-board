@@ -1,7 +1,6 @@
 package com.youran.gogoboard.user;
 
 import javax.management.openmbean.KeyAlreadyExistsException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,50 +46,55 @@ public class UserController {
 	}
 	
 	@PostMapping("/auth")
-	public ResponseEntity<String> login(@RequestBody UserVO userVO, 
+	public ResponseEntity<AuthResponse> login(@RequestBody UserVO userVO, 
 			Authentication authentication, HttpServletResponse response) {
 		
-		AuthVO authVO = new AuthVO();
+		AuthResponse authResponse = new AuthResponse();
 		
 		try {
-			authVO = service.login(userVO);
-			Cookie cookie = new Cookie("refreshToken", authVO.getRefreshToken());
-			cookie.setMaxAge(24 * 60 * 60);
-			//cookie.setSecure(true); // https 사용시 설정 
-			cookie.setHttpOnly(true); // servlet-api 3 이후 사용 가능 
-			response.addCookie(cookie);
+			AuthVO authVO = service.login(userVO);
+			response.addCookie(authVO.generateRefreshTokenCookie());
 			
-			authentication = new UserAuthentication((Object)authVO.getUserId(), authVO.getAccessToken());
+			authentication = new UserAuthentication((Object)authVO.getUser().getId(), authVO.getAccessToken());
 			SecurityContextHolder.getContext().setAuthentication(authentication);
+			authResponse.setUser(authVO.getUser());
+			authResponse.setAccessToken(authVO.getAccessToken());
 			
 		} catch(UnauthorizedException ue) {
-			return new ResponseEntity<String>(ue.getMessage(), HttpStatus.UNAUTHORIZED);
+			authResponse.setMessage(ue.getMessage());
+			return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.UNAUTHORIZED);
 		} catch(Exception e) {
 			log.error("Exception in login: {}", e.getMessage());
-			return new ResponseEntity<String>("Fail...", HttpStatus.INTERNAL_SERVER_ERROR);
+			authResponse.setMessage(e.getMessage());
+			return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<String>(authVO.getAccessToken(),HttpStatus.OK);
+		return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
 	}
 	
 	@PostMapping("/auth/refresh")
-	public ResponseEntity<String> refresh(
-			@CookieValue(value="refreshToken", required=true) Cookie cookie, 
+	public ResponseEntity<AuthResponse> refresh(
+			@CookieValue(value="gogoboard-rtk", required=true, defaultValue="no token") String refreshToken, 
 			HttpServletResponse response) {
-		
-		AuthVO authVO = new AuthVO();
-		
+
+		AuthResponse authResponse = new AuthResponse();
+	
 		try {
-			authVO.setRefreshToken(cookie.getValue());	
-			authVO = service.refresh(authVO);
-			cookie.setValue(authVO.getRefreshToken());
+			log.debug("refreshToken from cookie: {}",refreshToken);
+			AuthVO authVO = service.refresh(refreshToken);
+			response.addCookie(authVO.generateRefreshTokenCookie());
+			authResponse.setUser(authVO.getUser());
+			authResponse.setAccessToken(authVO.getAccessToken());
 			
 		} catch(UnauthorizedException ue) {
-			return new ResponseEntity<String>(ue.getMessage(), HttpStatus.UNAUTHORIZED);
+			authResponse.setMessage(ue.getMessage());
+			log.error("UnauthorizedException in refresh: {}", ue.getMessage());
+			return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.UNAUTHORIZED);
 		} catch(Exception e) {
-			log.error("Exception in login: {}", e.getMessage());
-			return new ResponseEntity<String>("Fail...", HttpStatus.INTERNAL_SERVER_ERROR);
+			log.error("Exception in refresh: {}", e.getMessage());
+			authResponse.setMessage(e.getMessage());
+			return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
-		return new ResponseEntity<String>(authVO.getAccessToken(),HttpStatus.OK);
+		return new ResponseEntity<AuthResponse>(authResponse, HttpStatus.OK);
 	}
 	
 	

@@ -1,7 +1,7 @@
 package com.youran.gogoboard.util;
 
-import java.sql.Date;
 import java.time.Instant;
+import java.util.Date;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -35,13 +35,12 @@ public class JwtUtil {
 	
 	
 	public String generateAccessToken(String claim) {
-		log.debug("generateAccesToken-accessDuration: {}", accessDuration);
-		log.debug("now {}", Date.from(Instant.now()));
-		log.debug("expiresAt {}", Date.from(Instant.now().plusMillis(accessDuration)));
+		
+		Date accessTokenExpiresAt = Date.from(Instant.now().plusMillis(accessDuration));
 		
 		return JWT.create().withIssuer(issuer)
 					.withClaim("identifier", claim)
-					.withExpiresAt(Date.from(Instant.now().plusMillis(accessDuration)))
+					.withExpiresAt(accessTokenExpiresAt)
 					.sign(Algorithm.HMAC256(accessSecret));
 	}
 	
@@ -59,9 +58,12 @@ public class JwtUtil {
 	}
 	
 	public String generateRefreshToken() {
+		
+		Date refreshTokenExpiresAt = Date.from(Instant.now().plusMillis(refreshDuration));
+		log.debug("refreshTokenExpiresAt", refreshTokenExpiresAt);
 		return JWT.create().withIssuer(issuer)
 					.withClaim("identifier", UUID.randomUUID().toString())
-					.withExpiresAt(Date.from(Instant.now().plusMillis(refreshDuration)))
+					.withExpiresAt(refreshTokenExpiresAt)
 					.sign(Algorithm.HMAC256(refreshSecret));
 	}
 	
