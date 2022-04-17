@@ -16,7 +16,7 @@
 	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
 		<property name="locations">
 			<list>
-				<value>classpath:properties/application.properties</value>
+				<value>classpath:properties/application-#{systemProperties['spring.profiles.active']}.properties</value>
 			</list>
 		</property>
 	</bean>
