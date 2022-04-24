@@ -17,9 +17,11 @@ public class PostService {
 	@Autowired
 	private PostDAO dao;
 	
-	public List<PostVO> getPosts(int page) throws Exception {
+	public List<PostVO> getPosts(int page, int startAt) throws Exception {
 		PageVO pageVO = new PageVO();
 		pageVO.setPage(page);
+		pageVO.setStartAt(startAt);
+		log.debug("PageVO: {}", pageVO.toString());
 		return dao.selectPosts(pageVO);
 	}
 	

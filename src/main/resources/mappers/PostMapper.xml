@@ -20,6 +20,7 @@
   </resultMap>
   
   <select id="selectPosts" parameterType="PageVO" resultMap="postResult">
+  WITH LIST AS (
     SELECT 
     	    p.id as post_id,
     	    p.title as post_title,
@@ -31,9 +32,14 @@
     	    p.updated as post_updated
       FROM "Posts" p, "Users" u
      WHERE  p.user_id = u.id
-     ORDER  BY p.created DESC 
+     ORDER  BY p.id DESC 
      LIMIT #{limit} 
   	OFFSET #{offset}
+  	)
+  	SELECT * FROM LIST
+  	<if test="startAt != null and startAt != 0">
+       WHERE  post_id <![CDATA[<]]> #{startAt}
+     </if>
 	</select>
   
   <select id="selectPostById" resultMap="postResult">

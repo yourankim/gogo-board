@@ -25,12 +25,13 @@ public class PostController {
 	private PostService service;
 	
 	@GetMapping
-	public ResponseEntity<PostResponse> getPosts(@RequestParam(value="page", defaultValue="0") int page) {
+	public ResponseEntity<PostResponse> getPosts(@RequestParam(value="page", defaultValue="0") int page, 
+				@RequestParam(value="startAt", defaultValue="0") int startAt) {
 		
 		PostResponse response = new PostResponse();
 		
 		try {	
-			response.setPosts(service.getPosts(page));
+			response.setPosts(service.getPosts(page, startAt));
 			
 		} catch(Exception e) {
 			log.error("Exception in getPosts: {}", e.getMessage());

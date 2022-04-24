@@ -8,6 +8,7 @@ public class PageVO {
 	private int limit = 10;
 	private int page;
 	private int offset;
+    private int startAt;
 	
 	public void setPage(int page) {
 		this.page = page;
